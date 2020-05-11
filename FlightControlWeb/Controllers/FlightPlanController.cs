@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using FlightControlWeb.Models;
+using FlightControlWeb.Models.FlightInfo;
 
 
 namespace FlightControlWeb.Controllers
@@ -35,7 +35,7 @@ namespace FlightControlWeb.Controllers
             return this.flightPlanManager.AddFlightPlan(flightPlan);
         }
 
-        // DELETE: api/ApiWithActions/5
+        /*// DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
         public ActionResult Delete(string id)
         {
@@ -45,6 +45,6 @@ namespace FlightControlWeb.Controllers
             }
 
             return NotFound();
-        }
+        }*/
     }
 }

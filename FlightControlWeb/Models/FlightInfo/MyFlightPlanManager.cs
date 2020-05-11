@@ -25,7 +25,7 @@ namespace FlightControlWeb.Models.FlightInfo
                 return p;
             }
 
-            return new FlightPlan().NullFlightPlan;
+            return FlightPlan.nullFlightPlan;
         }
 
         public bool DeleteFlightPlanById(string id)
@@ -48,7 +48,7 @@ namespace FlightControlWeb.Models.FlightInfo
             }
             else
             {
-                return new FlightPlan().NullFlightPlan;
+                return FlightPlan.nullFlightPlan;
             }
         }
 
@@ -77,5 +77,57 @@ namespace FlightControlWeb.Models.FlightInfo
 
             return id;
         }
+
+        public bool IsValidFlightPlan(FlightPlan flightPlan, DateTime dateTimeRelativeTo)
+        {
+            DateTime dateTimeCumm = flightPlan.Initial_Location.date_Time;
+            //if aircraft didnt take off yet -> take next flight plan
+            if (flightPlan.Initial_Location.date_Time > dateTimeRelativeTo)
+                return false;
+
+            dateTimeCumm = flightPlan.Initial_Location.date_Time;
+            // Cummulate time spans and init time to get land time
+            foreach (Segment segment in flightPlan.Segments)
+            {
+                dateTimeCumm = dateTimeCumm.AddSeconds(segment.TimeSpan_Seconds);
+
+            }
+
+            // if aircraft already landed -> take next flight plan
+            if (dateTimeCumm < dateTimeRelativeTo)
+                return false;
+
+            return true;
+        }
+
+        /*public List<FlightPlan> GetRelevantFlightPlans(DateTime dateTimeRelativeTo)
+        {
+            List<FlightPlan> flightPlans = new List<FlightPlan>();
+            DateTime dateTimeCumm;
+
+            foreach (KeyValuePair<string, FlightPlan> entry in flightPlansInfo)
+            {
+                //if aircraft didnt take off yet -> take next flight plan
+                if (entry.Value.Initial_Location.date_Time > dateTimeRelativeTo)
+                    continue;
+
+                dateTimeCumm = entry.Value.Initial_Location.date_Time;
+                // Cummulate time spans and init time to get land time
+                foreach (Segment segment in entry.Value.Segments)
+                {
+                    dateTimeCumm = dateTimeCumm.AddSeconds(segment.TimeSpan_Seconds);
+
+                }
+                // if aircraft already landed -> take next flight plan
+                if (dateTimeCumm < dateTimeRelativeTo)
+                    continue;
+
+                flightPlans.Add(entry.Value);
+
+            }
+
+            return flightPlans;
+
+        }*/
     }
 }

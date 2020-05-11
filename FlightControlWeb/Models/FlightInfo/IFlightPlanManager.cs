@@ -16,5 +16,9 @@ namespace FlightControlWeb.Models.FlightInfo
         FlightPlan AddFlightPlan(FlightPlan p);
 
         bool DeleteFlightPlanById(string id);
+
+        public bool IsValidFlightPlan(FlightPlan flightPlan, DateTime dateTimeRelativeTo);
+
+        //List<FlightPlan> GetRelevantFlightPlans(DateTime dateTime);
     }
 }

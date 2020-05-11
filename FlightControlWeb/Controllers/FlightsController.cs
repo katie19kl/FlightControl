@@ -27,17 +27,30 @@ namespace FlightControlWeb.Controllers
         [HttpGet]
         public IEnumerable<Flight> Get(DateTime relative_To)
         {
-            FlightCreator creator = new FlightCreator(new MyFlightBuilder());
+            FlightCreator creator;
             ConcurrentDictionary<string, FlightPlan> flightPlansInfo = this.planManager.GetAllFlightPlans();
+            //List<FlightPlan> relevantFlightPlans = this.planManager.GetRelevantFlightPlans(relative_To);
+            List<Flight> flights = new List<Flight>();
             
+            foreach(KeyValuePair<string, FlightPlan> entry in flightPlansInfo)
+            {
+                creator = new FlightCreator(new MyFlightBuilder());
+                if (planManager.IsValidFlightPlan(entry.Value, relative_To))
+                {
+                    creator.CreateFlight(entry.Value, entry.Key);
+                    flights.Add(creator.GetFlight());
+                }
+            }
+
+            return flights;
         }
 
-        // GET: api/Flights/5
+        /*// GET: api/Flights/5
         [HttpGet("{id}", Name = "Get")]
         public IEnumerable<Flight> Get([FromBody] DateTime relative_to, string sync_all)
         {
-            return "value";
-        }
+            return new List<Flight>();
+        }*/
 
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]

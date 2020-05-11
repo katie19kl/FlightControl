@@ -20,5 +20,7 @@ namespace FlightControlWeb.Models.FlightInfo
         public DateTime Date_Time { get; set; }
 
         public bool Is_External { get; set; }
+
+        public DateTime Relative_To { get; set; }
     }
 }
