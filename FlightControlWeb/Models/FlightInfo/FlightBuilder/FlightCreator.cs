@@ -17,11 +17,17 @@ namespace FlightControlWeb.Models.FlightInfo.FlightBuilder
         public void CreateFlight(FlightPlan flightPlan, string id)
         {
             flightBuilder.SetCompany_Name(flightPlan.Company_Name);
+
             flightBuilder.SetDate_Time();
+
             flightBuilder.SetFlight_Id(id);
-            //flightBuilder.SetIs_External(); // how to find out?
+
+            flightBuilder.SetIs_External(false); // Since it is an internal flight.
+
             flightBuilder.SetLatitude(flightPlan);
+
             flightBuilder.SetLongitude(flightPlan);
+
             flightBuilder.SetPassengers(flightPlan.Passengers);
         }
 

@@ -28,7 +28,7 @@ namespace FlightControlWeb.Models.FlightInfo.FlightBuilder
 
         public void SetDate_Time()
         {
-            this.flight.Date_Time = DateTime.UtcNow; // change format of date time!!!!!!!!!!!
+            this.flight.Date_Time = DateTime.UtcNow;
         }
 
         public void SetFlight_Id(string id)
@@ -59,12 +59,12 @@ namespace FlightControlWeb.Models.FlightInfo.FlightBuilder
 
         private void CalculateLinearInterpolation(FlightPlan flightPlan)
         {
-            DateTime time = flightPlan.Initial_Location.date_Time;            
+            DateTime time = flightPlan.Initial_Location.Date_Time;            
             LinkedList<Segment> segments = flightPlan.Segments;
             Segment seg = segments.ElementAt(0), prevSeg;
             int i = 0;
 
-            while ((time.AddSeconds(seg.TimeSpan_Seconds) < DateTime.UtcNow) && (i < segments.Count))
+            while ((i < segments.Count) && (time.AddSeconds(seg.TimeSpan_Seconds) < DateTime.UtcNow))
             {
                 i++;
                 seg = segments.ElementAt(i);
@@ -72,15 +72,18 @@ namespace FlightControlWeb.Models.FlightInfo.FlightBuilder
             if (i == 0)
             {
                 prevSeg = new Segment();
-                prevSeg.Latitude = flightPlan.Initial_Location.latitude;
-                prevSeg.Longitude = flightPlan.Initial_Location.longitude;
+                prevSeg.Latitude = flightPlan.Initial_Location.Latitude;
+                prevSeg.Longitude = flightPlan.Initial_Location.Longitude;
+
             } else {
                 prevSeg = segments.ElementAt(i - 1);
             }
 
-            TimeSpan relation = DateTime.UtcNow.Subtract(time).Divide(seg.TimeSpan_Seconds);
-            location.latitude = (seg.Latitude - prevSeg.Latitude) * relation.TotalSeconds;
-            location.longitude = (seg.Longitude = prevSeg.Longitude) * relation.TotalSeconds;
+            TimeSpan sub = time.Subtract(DateTime.UtcNow);
+            TimeSpan relation = sub.Divide(seg.TimeSpan_Seconds);
+
+            location.latitude = prevSeg.Latitude + (seg.Latitude - prevSeg.Latitude) * relation.TotalSeconds;
+            location.longitude = prevSeg.Longitude + (seg.Longitude - prevSeg.Longitude) * relation.TotalSeconds;
         }
     }
 }

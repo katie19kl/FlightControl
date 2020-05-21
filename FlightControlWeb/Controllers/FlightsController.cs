@@ -8,6 +8,7 @@ using FlightControlWeb.Models;
 using System.Collections.Concurrent;
 using FlightControlWeb.Models.FlightInfo;
 using FlightControlWeb.Models.FlightInfo.FlightBuilder;
+using FlightControlWeb.Models.Servers;
 
 
 namespace FlightControlWeb.Controllers
@@ -17,38 +18,36 @@ namespace FlightControlWeb.Controllers
     public class FlightsController : ControllerBase
     {
         IFlightPlanManager planManager;
+        IServersManager serversManager;
+        
 
-        public FlightsController(IFlightPlanManager manager)
+        public FlightsController(IFlightPlanManager manager, IServersManager manager1)
         {
             this.planManager = manager;
+            this.serversManager = manager1;
         }
 
         // GET: api/Flights
         [HttpGet]
         public IEnumerable<Flight> Get(DateTime relative_To)
         {
-            FlightCreator creator;
-            ConcurrentDictionary<string, FlightPlan> flightPlansInfo = this.planManager.GetAllFlightPlans();
-            //List<FlightPlan> relevantFlightPlans = this.planManager.GetRelevantFlightPlans(relative_To);
-            List<Flight> flights = new List<Flight>();
-            
-            foreach(KeyValuePair<string, FlightPlan> entry in flightPlansInfo)
+            List<Flight> flights = GetInternalRelativeFlights(relative_To);
+         
+            if (Request.QueryString.Value.Contains("sync_all"))
             {
-                creator = new FlightCreator(new MyFlightBuilder());
-                if (planManager.IsValidFlightPlan(entry.Value, relative_To))
-                {
-                    creator.CreateFlight(entry.Value, entry.Key);
-                    flights.Add(creator.GetFlight());
-                }
+                flights.AddRange(GetExternalFlights(relative_To));
             }
 
             return flights;
         }
 
-        /*// GET: api/Flights/5
-        [HttpGet("{id}", Name = "Get")]
-        public IEnumerable<Flight> Get([FromBody] DateTime relative_to, string sync_all)
+        /*// GET: api/Flights/
+        [HttpGet]
+        public IEnumerable<Flight> Get(DateTime relative_To, string sync_All)
         {
+            List<Flight> internalFlights = GetInternalRelativeFlights(relative_To);
+            IEnumerable<Server> servers = this.serversManager.GetAllServers();
+
             return new List<Flight>();
         }*/
 
@@ -62,6 +61,33 @@ namespace FlightControlWeb.Controllers
             }
 
             return NotFound();
+        }
+
+        private List<Flight> GetInternalRelativeFlights(DateTime relative_To)
+        {
+            DateTime time = relative_To.ToUniversalTime();
+            FlightCreator creator;
+            ConcurrentDictionary<string, FlightPlan> flightPlansInfo = this.planManager.GetAllFlightPlans();
+            List<Flight> flights = new List<Flight>();
+
+            foreach (KeyValuePair<string, FlightPlan> entry in flightPlansInfo)
+            {
+                creator = new FlightCreator(new MyFlightBuilder());
+                if (planManager.IsValidFlightPlan(entry.Value, time))
+                {
+                    creator.CreateFlight(entry.Value, entry.Key);
+                    flights.Add(creator.GetFlight());
+                }
+            }
+
+            return flights;
+        }
+
+        private List<Flight> GetExternalFlights(DateTime relative_To)
+        {
+            IEnumerable<Server> servers = this.serversManager.GetAllServers();
+
+            return new List<Flight>();
         }
     }
 }

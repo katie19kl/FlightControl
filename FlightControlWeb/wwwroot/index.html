@@ -1,10 +1,97 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <title></title>
+    <title>Flight Control</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="js/flightsHandler.js"></script>
+    <script src="js/createMap.js"></script>
+
+    <style>
+
+        .container {
+            max-width: 1920px;
+            width: 100%;
+        }
+
+        .well {
+            overflow: auto;
+        }
+
+        .headers {
+            font-family: 'Comic Sans MS';
+            font: bold;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        #mymap {
+            height: 350px;
+            width: auto;
+            margin-right: -20px;
+            margin-left: -20px;
+            margin-top: -20px;
+        }
+    </style>
 </head>
 <body>
-    <p> Hi There! </p>
+
+    <script>
+        let variable = setInterval(getFlights, 1000); // Calls the function every second.
+    </script>
+
+    <script>
+        // Before the map is being initialized.
+        var mapsPlaceholder = [];
+
+        L.Map.addInitHook(function () {
+            mapsPlaceholder.push(this); // Use whatever global scope variable you like.
+        });
+    </script>
+
+    <div class="container text-center" style="padding-top: 20px;">
+        <div class="col-lg-8 text-left" style="height: 500px;">
+
+            <div id="map" style="height: 350px;" class="well">
+                <div id="mymap"></div>
+                <script>initializeMap()</script>
+            </div>
+
+            <div class="well" style="height: 180px;">
+                <p class="headers">FLIGHT DETAILS</p>
+            </div>
+        </div>
+
+        <div class="col-lg-4 sidenav">
+
+            <div class="well" style="height: 265px;">
+                <p class="headers">MY FLIGHTS</p>
+
+                <table id="flightsTable" class="table table-bordered">
+                    <thead style="background-color: aquamarine;">
+                        <tr>
+                            <th style="font-size: 12px;" class="text-center">ID</th>
+                            <th id="th" colspan="1" style="font-size: 12px;" class="text-center">Company Name</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablebody">
+                    </tbody>
+                </table>
+
+            </div>
+
+            <div class="well" style="height: 265px;">
+                <p class="headers">EXTERNAL FLIGHTS</p>
+
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>

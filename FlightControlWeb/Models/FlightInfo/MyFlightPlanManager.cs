@@ -80,12 +80,12 @@ namespace FlightControlWeb.Models.FlightInfo
 
         public bool IsValidFlightPlan(FlightPlan flightPlan, DateTime dateTimeRelativeTo)
         {
-            DateTime dateTimeCumm = flightPlan.Initial_Location.date_Time;
+            DateTime dateTimeCumm = flightPlan.Initial_Location.Date_Time;
             //if aircraft didnt take off yet -> take next flight plan
-            if (flightPlan.Initial_Location.date_Time > dateTimeRelativeTo)
+            if (flightPlan.Initial_Location.Date_Time > dateTimeRelativeTo)
                 return false;
 
-            dateTimeCumm = flightPlan.Initial_Location.date_Time;
+            //dateTimeCumm = flightPlan.Initial_Location.Date_Time;
             // Cummulate time spans and init time to get land time
             foreach (Segment segment in flightPlan.Segments)
             {

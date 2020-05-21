@@ -7,18 +7,18 @@ namespace FlightControlWeb.Models.FlightInfo
 {
     public class FlightPlan
     {
-        public struct InitialLocation
+        /*public struct InitialLocation
         {
             public double latitude;
             public double longitude;
             public DateTime date_Time;
-        }
+        }*/
 
         // Null design pattern- initialize default object.
         public static readonly FlightPlan nullFlightPlan = new FlightPlan()
         {
             Company_Name = "",
-            Initial_Location = new InitialLocation() { latitude = 0, longitude = 0, date_Time = new DateTime() },
+            Initial_Location = new InitialLocation() { Latitude = 0, Longitude = 0, Date_Time = new DateTime() },
             Segments = new LinkedList<Segment>()
         };
 
