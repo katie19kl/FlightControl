@@ -15,10 +15,14 @@ namespace FlightControlWeb.Models.FlightInfo
 
         FlightPlan AddFlightPlan(FlightPlan p);
 
+        //List<FlightPlan> GetRelevantFlightPlans(DateTime dateTime);
+
+        bool IsValidFlightPlan(FlightPlan flightPlan, DateTime dateTimeRelativeTo);
+
         bool DeleteFlightPlanById(string id);
 
-        public bool IsValidFlightPlan(FlightPlan flightPlan, DateTime dateTimeRelativeTo);
+        EndDataOfFLightPlan GetEndDataOfPlan(string id);
 
-        //List<FlightPlan> GetRelevantFlightPlans(DateTime dateTime);
+        //LinkedList<Segment> ListOfSmallerSegments(LinkedList<Segment> orinialSegments, string id);
     }
 }

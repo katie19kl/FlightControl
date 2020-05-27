@@ -37,12 +37,17 @@
             margin-left: -20px;
             margin-top: -20px;
         }
+
+        .selected {
+            color: red;
+        }
+
     </style>
 </head>
 <body>
 
     <script>
-        let variable = setInterval(getFlights, 1000); // Calls the function every second.
+        let variable = setInterval(getFlights, 250); // Calls the function 4 times per second.
     </script>
 
     <script>
@@ -63,7 +68,8 @@
             </div>
 
             <div class="well" style="height: 180px;">
-                <p class="headers">FLIGHT DETAILS</p>
+                <p id="bla" class="headers">FLIGHT DETAILS</p>
+                <p id="FlightDetailsBlock" style="text-align: center;"></p>
             </div>
         </div>
 
@@ -88,6 +94,16 @@
 
             <div class="well" style="height: 265px;">
                 <p class="headers">EXTERNAL FLIGHTS</p>
+
+                <table id="externalFlights" class="table table-bordered">
+                    <thead style="background-color: aquamarine;">
+                        <tr>
+                            <th style="font-size: 12px;" class="text-center">ID</th>
+                            <th colspan="1" style="font-size: 12px;" class="text-center">Company Name</th>
+                        </tr>
+                    </thead>
+                    <tbody id="externalBody"></tbody>
+                </table>
 
             </div>
         </div>

@@ -14,7 +14,7 @@ namespace FlightControlWeb.Models.FlightInfo.FlightBuilder
             this.flightBuilder = builder;
         }
 
-        public void CreateFlight(FlightPlan flightPlan, string id)
+        public void CreateFlight(FlightPlan flightPlan, string id, DateTime relative_To)
         {
             flightBuilder.SetCompany_Name(flightPlan.Company_Name);
 
@@ -24,9 +24,9 @@ namespace FlightControlWeb.Models.FlightInfo.FlightBuilder
 
             flightBuilder.SetIs_External(false); // Since it is an internal flight.
 
-            flightBuilder.SetLatitude(flightPlan);
+            flightBuilder.SetLatitude(flightPlan, relative_To);
 
-            flightBuilder.SetLongitude(flightPlan);
+            flightBuilder.SetLongitude(flightPlan, relative_To);
 
             flightBuilder.SetPassengers(flightPlan.Passengers);
         }

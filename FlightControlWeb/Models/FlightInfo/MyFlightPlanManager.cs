@@ -100,34 +100,60 @@ namespace FlightControlWeb.Models.FlightInfo
             return true;
         }
 
-        /*public List<FlightPlan> GetRelevantFlightPlans(DateTime dateTimeRelativeTo)
+        public EndDataOfFLightPlan GetEndDataOfPlan(string id)
         {
-            List<FlightPlan> flightPlans = new List<FlightPlan>();
-            DateTime dateTimeCumm;
+            EndDataOfFLightPlan endPlan = new EndDataOfFLightPlan();
+            FlightPlan flPLan = GetFlightPlanById(id);
 
-            foreach (KeyValuePair<string, FlightPlan> entry in flightPlansInfo)
+            endPlan.CompanyName = flPLan.Company_Name;
+            endPlan.StartLatitude = flPLan.Initial_Location.Latitude;
+            endPlan.StartLongitude = flPLan.Initial_Location.Longitude;
+            endPlan.TakeOffTime = flPLan.Initial_Location.Date_Time;
+            endPlan.NumOfPassengers = flPLan.Passengers;
+
+            LinkedList<Segment> listOfSeg = flPLan.Segments;
+            endPlan.EndLatitude = endPlan.StartLatitude;
+            endPlan.EndLongitude = endPlan.StartLongitude;
+            endPlan.LandTime = endPlan.TakeOffTime;
+            foreach (Segment item in listOfSeg)
             {
-                //if aircraft didnt take off yet -> take next flight plan
-                if (entry.Value.Initial_Location.date_Time > dateTimeRelativeTo)
-                    continue;
+                endPlan.EndLatitude = item.Latitude;
+                endPlan.EndLongitude = item.Longitude;
+                endPlan.LandTime = endPlan.LandTime.AddSeconds(item.TimeSpan_Seconds);
+            }
+            //endPlan.Segments = ListOfSmallerSegments(listOfSeg, id);
+            return endPlan;
+        }
 
-                dateTimeCumm = entry.Value.Initial_Location.date_Time;
-                // Cummulate time spans and init time to get land time
-                foreach (Segment segment in entry.Value.Segments)
+        /*private LinkedList<Segment> ListOfSmallerSegments(LinkedList<Segment> originalSegments, string id)
+        {
+            LinkedList<Segment> segments = new LinkedList<Segment>();
+            int i = 0, j = 0;
+            double initLat = this.flightPlansInfo[id].Initial_Location.Latitude;
+            double initLong = this.flightPlansInfo[id].Initial_Location.Longitude;
+
+            for (i = 0; i < originalSegments.Count(); i++)
+            {
+                for (j = 0; j < 10; j++)
                 {
-                    dateTimeCumm = dateTimeCumm.AddSeconds(segment.TimeSpan_Seconds);
-
+                    Segment seg = new Segment();      
+                    if (i == 0)
+                    {
+                        seg.Latitude = initLat;
+                        seg.Longitude = initLong;
+                    } else
+                    {
+                        seg.Latitude = originalSegments.ElementAt(i - 1).Latitude;
+                        seg.Longitude = originalSegments.ElementAt(i - 1).Longitude;
+                    }
+                    seg.Latitude += (originalSegments.ElementAt(i).Latitude / 10) * j;
+                    seg.Longitude += (originalSegments.ElementAt(i).Longitude / 10) * j;
+                    seg.TimeSpan_Seconds = originalSegments.ElementAt(i).TimeSpan_Seconds / 10;
+                    segments.AddLast(seg);
                 }
-                // if aircraft already landed -> take next flight plan
-                if (dateTimeCumm < dateTimeRelativeTo)
-                    continue;
-
-                flightPlans.Add(entry.Value);
-
             }
 
-            return flightPlans;
-
+            return segments;
         }*/
     }
 }

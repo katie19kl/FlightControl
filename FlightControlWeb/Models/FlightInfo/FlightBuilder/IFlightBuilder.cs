@@ -9,9 +9,9 @@ namespace FlightControlWeb.Models.FlightInfo.FlightBuilder
     {
         void SetFlight_Id(string s);
 
-        void SetLatitude(FlightPlan flightPlan);
+        void SetLatitude(FlightPlan flightPlan, DateTime relative_to);
 
-        void SetLongitude(FlightPlan flightPlan);
+        void SetLongitude(FlightPlan flightPlan, DateTime relative_to);
 
         void SetPassengers(int passengers);
 

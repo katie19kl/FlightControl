@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using FlightControlWeb.Models;
+using System.Net.Http;
 using System.Collections.Concurrent;
 using FlightControlWeb.Models.FlightInfo;
 using FlightControlWeb.Models.FlightInfo.FlightBuilder;
@@ -17,8 +17,9 @@ namespace FlightControlWeb.Controllers
     [ApiController]
     public class FlightsController : ControllerBase
     {
-        IFlightPlanManager planManager;
-        IServersManager serversManager;
+        private IFlightPlanManager planManager;
+        private IServersManager serversManager;
+        private static readonly HttpClient client = new HttpClient();
         
 
         public FlightsController(IFlightPlanManager manager, IServersManager manager1)
@@ -40,16 +41,6 @@ namespace FlightControlWeb.Controllers
 
             return flights;
         }
-
-        /*// GET: api/Flights/
-        [HttpGet]
-        public IEnumerable<Flight> Get(DateTime relative_To, string sync_All)
-        {
-            List<Flight> internalFlights = GetInternalRelativeFlights(relative_To);
-            IEnumerable<Server> servers = this.serversManager.GetAllServers();
-
-            return new List<Flight>();
-        }*/
 
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
@@ -75,7 +66,7 @@ namespace FlightControlWeb.Controllers
                 creator = new FlightCreator(new MyFlightBuilder());
                 if (planManager.IsValidFlightPlan(entry.Value, time))
                 {
-                    creator.CreateFlight(entry.Value, entry.Key);
+                    creator.CreateFlight(entry.Value, entry.Key, time);
                     flights.Add(creator.GetFlight());
                 }
             }
