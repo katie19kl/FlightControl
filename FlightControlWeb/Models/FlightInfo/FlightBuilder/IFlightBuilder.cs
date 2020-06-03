@@ -9,15 +9,15 @@ namespace FlightControlWeb.Models.FlightInfo.FlightBuilder
     {
         void SetFlight_Id(string s);
 
-        void SetLatitude(double latitude);
+        void SetLatitude(FlightPlan flightPlan, DateTime dateTime);
 
-        void SetLongitude(double longitude);
+        void SetLongitude(FlightPlan flightPlan, DateTime dateTime);
 
         void SetPassengers(int passengers);
 
         void SetCompany_Name(string name);
 
-        void SetDate_Time(DateTime time);
+        void SetDate_Time(DateTime relative_To);
 
         void SetIs_External(bool isExternal);
 

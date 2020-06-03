@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using FlightControlWeb.Models.Servers;
+using FlightControlWeb.Models;
 
 namespace FlightControlWeb.Controllers
 {
@@ -15,6 +16,7 @@ namespace FlightControlWeb.Controllers
 
         private IServersManager serversManager;
 
+        /* Constructor. */
         public ServersController(IServersManager manager)
         {
             this.serversManager = manager;
@@ -29,12 +31,30 @@ namespace FlightControlWeb.Controllers
 
         // POST: api/Servers
         [HttpPost]
-        public Server Post([FromBody] Server server)
+        public ActionResult Post([FromBody] Server server)
         {
-            return this.serversManager.AddServer(server);
+            JsonValidationChecker jsonChecker = new JsonValidationChecker();
+            
+            // Check if the json is valid.
+            if (!jsonChecker.IsValidServer(server))
+            {
+                return new BadRequestResult();
+            }
+
+            Server myServer = this.serversManager.AddServer(server);
+
+            if (myServer == Server.nullServer)
+            {
+
+                // An error has occured when trying to 
+                // add the server(id exists already).
+                return new BadRequestResult();
+            }
+
+            return new OkObjectResult(myServer);
         }
 
-        // DELETE: api/ApiWithActions/5
+        // DELETE: api/Servers/5
         [HttpDelete("{id}")]
         public ActionResult Delete(string id)
         {
@@ -43,6 +63,8 @@ namespace FlightControlWeb.Controllers
                 return Ok();
             }
 
+            // An error has occured when trying to 
+            // Delete the server(id doesn't exist).
             return NotFound();
         }
     }

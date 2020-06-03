@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using FlightControlWeb.Models;
-using System.Collections.Concurrent;
 using FlightControlWeb.Models.FlightInfo;
-using FlightControlWeb.Models.FlightInfo.FlightBuilder;
+using FlightControlWeb.Models.Servers;
 
 
 namespace FlightControlWeb.Controllers
@@ -17,29 +15,28 @@ namespace FlightControlWeb.Controllers
     public class FlightsController : ControllerBase
     {
         IFlightPlanManager planManager;
+        IServersManager serversManager;
+        IRequestHandler requestHandler;
 
-        public FlightsController(IFlightPlanManager manager)
+        /* Constructor. */
+        public FlightsController(IFlightPlanManager manager,
+            IServersManager serverManager,
+            IRequestHandler handler)
         {
+            this.serversManager = serverManager;
             this.planManager = manager;
+            this.requestHandler = handler;
         }
 
-        // GET: api/Flights
+        
         [HttpGet]
-        public IEnumerable<Flight> Get(DateTime relative_To)
+        public async Task<IEnumerable<Flight>> GetExternal(DateTime relative_To)
         {
-            FlightCreator creator = new FlightCreator(new MyFlightBuilder());
-            ConcurrentDictionary<string, FlightPlan> flightPlansInfo = this.planManager.GetAllFlightPlans();
-            
+             return await Task.Run(() => GetFlights(relative_To));
+
         }
 
-        // GET: api/Flights/5
-        [HttpGet("{id}", Name = "Get")]
-        public IEnumerable<Flight> Get([FromBody] DateTime relative_to, string sync_all)
-        {
-            return "value";
-        }
-
-        // DELETE: api/ApiWithActions/5
+        // DELETE: api/Flights/5
         [HttpDelete("{id}")]
         public ActionResult Delete(string id)
         {
@@ -48,7 +45,40 @@ namespace FlightControlWeb.Controllers
                 return Ok();
             }
 
+            // In case the deletion has failed(id doesn't exist).
             return NotFound();
+        }
+
+        private IEnumerable<Flight> GetFlights(DateTime relative_To)
+        {
+            DateTime time = relative_To.ToUniversalTime();
+            bool sync_all = true;
+            if (Request != null)
+            {
+                sync_all = Request.QueryString.Value.Contains("sync_all");
+            }
+            if (sync_all)
+            {
+                IEnumerable<Server> listOfServer = serversManager.GetAllServers();
+                List<Flight> listOfFlights = this.planManager.GetInternalFlights(relative_To);
+
+                foreach (var server in listOfServer)
+                {
+                    List<Flight> listFromServer = new List<Flight>();
+                    listFromServer = requestHandler.GetFlightFromServer(server, time);
+
+                    foreach (var flight in listFromServer)
+                    {
+                        listOfFlights.Add(flight);
+                    }
+                }
+                return listOfFlights;
+            }
+            else
+            {
+                List<Flight> listOfFlights = this.planManager.GetInternalFlights(relative_To);
+                return listOfFlights;
+            }
         }
     }
 }

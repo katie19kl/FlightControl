@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using FlightControlWeb.Models;
 using FlightControlWeb.Models.Servers;
+using FlightControlWeb.Models.FlightInfo;
 
 namespace FlightControlWeb
 {
@@ -29,8 +30,10 @@ namespace FlightControlWeb
         {
             services.AddRouting(); // In-program routing.
             services.AddControllers();
+
             services.AddSingleton(typeof(IFlightPlanManager), typeof(MyFlightPlanManager));
             services.AddSingleton(typeof(IServersManager), typeof(MyServerManager));
+            services.AddSingleton(typeof(IRequestHandler), typeof(MyRequestHandler));
 
             /*services.AddHttpClient("api", client =>
             client.DefaultRequestHeaders.Add("Accept", "application/json"));*/
@@ -43,6 +46,12 @@ namespace FlightControlWeb
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            DefaultFilesOptions options = new DefaultFilesOptions();
+            options.DefaultFileNames.Clear();
+            options.DefaultFileNames.Add("index.html");
+            app.UseDefaultFiles(options);
+
 
             app.UseStaticFiles();
 

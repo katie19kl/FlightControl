@@ -5,57 +5,29 @@ using System.Threading.Tasks;
 
 namespace FlightControlWeb.Models.FlightInfo
 {
+    [Serializable()]
     public class FlightPlan
     {
-        public struct InitialLocation
-        {
-            public double latitude;
-            public double longitude;
-            public DateTime date_Time;
-        }
 
         // Null design pattern- initialize default object.
-        public static readonly FlightPlan nullFlightPlan = new FlightPlan()
+        public static readonly FlightPlan NullFlightPlan = new FlightPlan()
         {
             Company_Name = "",
-            initial_Location = new InitialLocation() { latitude = 0, longitude = 0, date_Time = new DateTime() },
+            Initial_Location = new InitialLocation() 
+            {
+                Latitude = 0,
+                Longitude = 0, 
+                Date_Time = new DateTime() 
+            },
             Segments = new LinkedList<Segment>()
         };
 
-        InitialLocation initial_Location;
-        LinkedList<Segment> segments = new LinkedList<Segment>();
+        public LinkedList<Segment> Segments { get; set; } = null;
 
-        public FlightPlan NullFlightPlan { get; }
+        public int Passengers { get; set; } = -1;
 
-        public int Passengers { get; set; }
+        public string Company_Name { get; set; } = null;
 
-        public string Company_Name { get; set; }
-
-        public InitialLocation Initial_Location
-        {
-            get
-            {
-                return this.initial_Location;
-            }
-
-            set
-            {
-                this.initial_Location = value;
-            }
-
-        }
-
-        public LinkedList<Segment> Segments
-        {
-            get
-            {
-                return this.segments;
-            }
-
-            set
-            {
-                this.segments = value;
-            }
-        }
+        public InitialLocation Initial_Location { get; set; } = null;
     }
 }

@@ -4,14 +4,37 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>../out</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>../out</OutputPath>
+  </PropertyGroup>
+
   <ItemGroup>
-    <Folder Include="wwwroot\js\" />
-    <Folder Include="wwwroot\styles\" />
+    <Compile Remove="wwwroot\styles\**" />
+    <Content Remove="wwwroot\styles\**" />
+    <EmbeddedResource Remove="wwwroot\styles\**" />
+    <None Remove="wwwroot\styles\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\index.html" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.2" />
+    <PackageReference Include="Nancy" Version="2.0.0" />
   </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="mkdir $(SolutionDir)\wwwroot&#xD;&#xA;mkdir $(SolutionDir)\out\wwwroot&#xD;&#xA;xcopy /E /Y &quot;$(ProjectDir)wwwroot&quot; &quot;$(SolutionDir)wwwroot&quot;&#xD;&#xA;xcopy /E /Y &quot;$(ProjectDir)wwwroot&quot; &quot;$(SolutionDir)out/wwwroot&quot;&#xD;&#xA;" />
+  </Target>
+
+  <PropertyGroup>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
 
 
 </Project>

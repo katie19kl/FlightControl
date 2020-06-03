@@ -11,12 +11,12 @@ namespace FlightControlWeb.Models.Servers
         // Null design pattern- initialize default object.
         public static readonly Server nullServer = new Server()
         {
-            Server_Id = "",
-            Server_Url = ""
+            ServerId = "",
+            ServerUrl = ""
         };
 
-        public string Server_Id { get; set; }
+        public string ServerId { get; set; } = null;
 
-        public string Server_Url { get; set; }
+        public string ServerUrl { get; set; } = null;
     }
 }

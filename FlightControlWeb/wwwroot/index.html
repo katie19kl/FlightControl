@@ -1,10 +1,140 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <title></title>
+    <title>Flight Control</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="js/flightsHandler.js"></script>
+    <script src="js/createMap.js"></script>
+    <script src="js/dragDrop.js"></script>
+
+    <style>
+
+        div.image {
+            content: url("drag_drop.png");
+        }
+
+        #drop_zone {
+            border: 2px dashed #ccc;
+            border-radius: 20px;
+            width: 480px;
+            font-family: sans-serif;
+            margin: 100px auto;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1920px;
+            width: 100%;
+        }
+
+        .well {
+            overflow: auto;
+        }
+
+        .headers {
+            font-family: 'Comic Sans MS';
+            font: bold;
+            font-size: 12px;
+            text-align: center;
+            margin-top: -15px;
+        }
+
+        #mymap {
+            height: 350px;
+            width: auto;
+            margin-right: -20px;
+            margin-left: -20px;
+            margin-top: -20px;
+        }
+    </style>
 </head>
-<body>
-    <p> Hi There! </p>
+
+
+<body style="background-color: papayawhip;">
+
+        <script>
+
+            // Calls the function 4 times per second.
+            let variable = setInterval(getFlights, 250);
+        </script>
+
+        <script>
+
+            // Before the map is being initialized.
+            var mapsPlaceholder = [];
+
+            L.Map.addInitHook(function () {
+
+                 // Use whatever global scope variable you like.
+                mapsPlaceholder.push(this);
+            });
+        </script>
+
+        <div class="container text-center" style="padding-top: 20px;">
+            <div class="col-lg-8 text-left" style="height: 500px;">
+
+                <div id="map" style="height: 350px; border-color: black;" class="well">
+                    <div id="mymap"></div>
+                    <script>initializeMap()</script>
+                </div>
+
+                <div class="well" style="height: 200px; background-color: floralwhite; border-color: black;">
+
+                    <p class="headers">FLIGHT DETAILS</p>
+                    <p id="FlightDetailsBlock" style="text-align: center;"></p>
+
+                </div>
+            </div>
+
+
+            <div class="col-lg-4 sidenav">
+
+                <div id="drop_zone" class="well"
+                     ondragenter="enterZone(event)" ondragend="endDrag(event)"
+                     ondragleave="leaveArea(event)" ondrop="dropHandler(event);"
+                     ondragover="dragOverHandler(event);"
+                     style="height: 275px; margin-top: 0px; width: auto; background-color: floralwhite;
+                     border-color: black;">
+
+                    <p id="check" class="headers">MY FLIGHTS <br> (supports drag & drop)</p>
+
+                    <table id="flightsTable" class="table table-bordered" ondragenter="enterTable(event)">
+
+                        <thead style="background-color: burlywood;">
+                            <tr>
+                                <th style="font-size: 12px;" class="text-center">ID</th>
+                                <th id="th" colspan="1" style="font-size: 12px;" class="text-center">Company Name</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablebody">
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="well" stylexternalTableBodye="height: 265px;" style="height: 275px; margin-top: -80px;
+                    background-color: floralwhite; border-color: black;">
+
+                    <p id="userDelayFlight" class="headers">EXTERNAL FLIGHTS</p>
+
+                    <table id="externalFlightsTable" class="table table-bordered">
+                        <thead style="background-color: burlywood;">
+                            <tr>
+                                <th style="font-size: 12px;" class="text-center">ID</th>
+                                <th id="th" colspan="1" style="font-size: 12px;" class="text-center">Company Name</th>
+                            </tr>
+                        </thead>
+                        <tbody id="externalTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
 </body>
 </html>

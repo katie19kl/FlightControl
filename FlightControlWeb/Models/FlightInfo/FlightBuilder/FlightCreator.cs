@@ -9,22 +9,32 @@ namespace FlightControlWeb.Models.FlightInfo.FlightBuilder
     {
         private IFlightBuilder flightBuilder;
 
+        /* Constructor. */
         public FlightCreator(IFlightBuilder builder)
         {
             this.flightBuilder = builder;
         }
 
-        public void CreateFlight(FlightPlan flightPlan, string id)
+        /* Creates the flight given a flight plan, its id and a date time. */
+        public void CreateFlight(FlightPlan flightPlan, string id, DateTime relativeToUTC)
         {
             flightBuilder.SetCompany_Name(flightPlan.Company_Name);
-            flightBuilder.SetDate_Time(flightPlan.Initial_Location.date_Time); // where should the calculation take place?
+          
             flightBuilder.SetFlight_Id(id);
-            //flightBuilder.SetIs_External(); // how to find out?
-            flightBuilder.SetLatitude(flightPlan.Initial_Location.latitude); // requires calculation(may also need segments)
-            flightBuilder.SetLongitude(flightPlan.Initial_Location.longitude); // requires calculation(may also need segments)
+
+            // Necessarily an internal flight.
+            flightBuilder.SetIs_External(false);
+            
             flightBuilder.SetPassengers(flightPlan.Passengers);
+
+            flightBuilder.SetDate_Time(relativeToUTC);
+
+            flightBuilder.SetLongitude(flightPlan,relativeToUTC);
+
+            flightBuilder.SetLatitude(flightPlan, relativeToUTC);
         }
 
+        /* Returns the created flight. */
         public Flight GetFlight()
         {
             return flightBuilder.GetFlight();

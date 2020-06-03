@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using FlightControlWeb.Models;
-
+using FlightControlWeb.Models.FlightInfo;
 
 namespace FlightControlWeb.Controllers
 {
@@ -16,6 +15,7 @@ namespace FlightControlWeb.Controllers
 
         private IFlightPlanManager flightPlanManager;
 
+        /* Constructor. */
         public FlightPlanController(IFlightPlanManager planManager)
         {
             this.flightPlanManager = planManager;
@@ -30,21 +30,29 @@ namespace FlightControlWeb.Controllers
 
         // POST: api/FlightPlan
         [HttpPost]
-        public FlightPlan Post([FromBody] FlightPlan flightPlan)
+        public ActionResult Post([FromBody] FlightPlan flightPlan)
         {
-            return this.flightPlanManager.AddFlightPlan(flightPlan);
-        }
+            JsonValidationChecker jsonChecker = new JsonValidationChecker();
 
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public ActionResult Delete(string id)
-        {
-            if (this.flightPlanManager.DeleteFlightPlanById(id))
+            // Check if the json file is valid.
+            if (!jsonChecker.IsValidFlightPlan(flightPlan))
             {
-                return Ok();
+                return new BadRequestResult();
             }
 
-            return NotFound();
+            FlightPlan fp = this.flightPlanManager.AddFlightPlan(flightPlan);
+
+            if (fp == FlightPlan.NullFlightPlan)
+            {
+
+                // There was error when trying to add the given flight plan.
+                return new BadRequestResult();
+            } 
+            
+            else
+            {
+                return new OkObjectResult(fp);
+            }
         }
     }
 }

@@ -8,10 +8,10 @@ namespace FlightControlWeb.Models.FlightInfo
     public class Segment
     {
 
-        public double Latitdue { get; set; }
+        public double Latitude { get; set; } = -200;
 
-        public double Longitude { get; set; }
+        public double Longitude { get; set; } = -200;
 
-        public double TimeSpan_seconds { get; set; }
+        public double TimeSpan_Seconds { get; set; } = -1;
     }
 }
